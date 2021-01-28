@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr.dao.RoleinfoDao">
+  <resultMap id="BaseResultMap" type="com.hr.entity.Roleinfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="operation" jdbcType="VARCHAR" property="operation" />
+    <collection column="id" property="rights" select="loadRights" ofType="Rightinfo"></collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, `operation`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from roleinfo
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="allRoles" resultType="Roleinfo">
+        select id,name,operation from roleinfo
+  </select>
+  <select id="allRights" resultType="Rightinfo">
+    select id,name,url from rightinfo
+  </select>
+  <select id="loadRights" parameterType="INTEGER" resultType="com.hr.entity.Rightinfo">
+    select rightinfo.id,rightinfo.name,rightinfo.url from role_right,roleinfo,rightinfo where roleinfo.id=role_right.role_id and role_right.right_id=rightinfo.id and roleinfo.id=#{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete  from role_right where role_id=#{id}
+  </delete>
+  <insert id="insert" parameterType="Map">
+    insert into role_right values(#{id},#{rights})
+  </insert>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.hr.entity.Roleinfo" useGeneratedKeys="true">
+    insert into roleinfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="operation != null">
+        `operation`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null">
+        #{operation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hr.entity.Roleinfo">
+    update roleinfo
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null">
+        `operation` = #{operation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hr.entity.Roleinfo">
+    update roleinfo
+    set `name` = #{name,jdbcType=VARCHAR},
+      `operation` = #{operation,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

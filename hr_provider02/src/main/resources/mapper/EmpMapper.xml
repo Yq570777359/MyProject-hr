@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr.dao.EmpDao">
+  <resultMap id="BaseResultMap" type="com.hr.entity.Emp">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="empno" jdbcType="VARCHAR" property="empno" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="salary" jdbcType="INTEGER" property="salary" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+    <result column="intime" jdbcType="VARCHAR" property="intime" />
+    <result column="dept_id" jdbcType="INTEGER" property="deptId" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="role" jdbcType="INTEGER" property="role" />
+    <association property="dept" javaType="Dept">
+      <result column="deptname" property="name"/>
+      <result column="manager" property="manager"/>
+    </association>
+    <association property="roleinfo" javaType="Roleinfo">
+      <result column="roleId" property="id"/>
+      <result column="roleName" property="name"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, empno, `name`, sex, age, salary, tel, photo, intime, dept_id, pwd, `role`
+  </sql>
+  <sql id="showAll" >
+    emp.id,emp.empno,emp.name,emp.sex,emp.age,emp.salary,emp.tel,emp.photo,emp.intime,emp.dept_id,emp.pwd,emp.role
+  </sql>
+  <select id="showAll" resultMap="BaseResultMap">
+    select <include refid="showAll"/>,dept.name deptname,dept.manager,roleinfo.id roleId,roleinfo.name roleName from emp,dept,roleinfo where dept.id=emp.dept_id and emp.role=roleinfo.id group by emp.empno
+  </select>
+  <select id="pager" parameterType="Map" resultMap="BaseResultMap">
+    select <include refid="showAll"/>,dept.name deptname,dept.manager,roleinfo.id roleId,roleinfo.name roleName from emp,dept,roleinfo where dept.id=emp.dept_id and emp.role=roleinfo.id group by emp.empno limit #{start},#{pageSize}
+  </select>
+  <select id="check" parameterType="String" resultType="Emp">
+    select <include refid="Base_Column_List"/> from emp where empno=#{empno}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from emp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="loadDept" resultType="Dept">
+    select id,name,manager from dept
+  </select>
+  <select id="loadRole" resultType="Roleinfo">
+    select id,name,operation from roleinfo
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from emp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.hr.entity.Emp" useGeneratedKeys="true">
+    insert into emp (empno, `name`, sex,
+      age, salary, tel, photo,
+      intime, dept_id, pwd,
+      `role`)
+    values (#{empno,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR},
+      #{age,jdbcType=INTEGER}, #{salary,jdbcType=INTEGER}, #{tel,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR},
+      #{intime,jdbcType=VARCHAR}, #{deptId,jdbcType=INTEGER}, #{pwd,jdbcType=VARCHAR},
+      #{role,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.hr.entity.Emp" useGeneratedKeys="true">
+    insert into emp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empno != null">
+        empno,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="salary != null">
+        salary,
+      </if>
+      <if test="tel != null">
+        tel,
+      </if>
+      <if test="photo != null">
+        photo,
+      </if>
+      <if test="intime != null">
+        intime,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+      <if test="pwd != null">
+        pwd,
+      </if>
+      <if test="role != null">
+        `role`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empno != null">
+        #{empno,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="salary != null">
+        #{salary,jdbcType=INTEGER},
+      </if>
+      <if test="tel != null">
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null">
+        #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="intime != null">
+        #{intime,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=INTEGER},
+      </if>
+      <if test="pwd != null">
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hr.entity.Emp">
+    update emp
+    <set>
+      <if test="empno != null">
+        empno = #{empno,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="salary != null">
+        salary = #{salary,jdbcType=INTEGER},
+      </if>
+      <if test="tel != null">
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null">
+        photo = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="intime != null">
+        intime = #{intime,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=INTEGER},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        `role` = #{role},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hr.entity.Emp">
+    update emp
+    set empno = #{empno,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      salary = #{salary,jdbcType=INTEGER},
+      tel = #{tel,jdbcType=VARCHAR},
+      photo = #{photo,jdbcType=VARCHAR},
+      intime = #{intime,jdbcType=VARCHAR},
+      dept_id = #{deptId,jdbcType=INTEGER},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      `role` = #{role}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

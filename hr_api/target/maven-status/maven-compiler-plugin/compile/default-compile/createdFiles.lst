@@ -1,0 +1,6 @@
+com\hr\entity\Dept.class
+com\hr\entity\RoleRight.class
+com\hr\entity\Emp.class
+com\hr\entity\Userinfo.class
+com\hr\entity\Rightinfo.class
+com\hr\entity\Roleinfo.class
